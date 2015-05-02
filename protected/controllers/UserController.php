@@ -75,6 +75,13 @@ Yii::import('application.models.Dto.QueryOption');
 
 		}
 
+		public function actionLoginWithFacebook(){
+			if(!isset($_POST['access_token'])){
+				HttpResponse::responseBadRequest();
+				return AjaxHelper::jsonError('access_token is not empty');
+			}	
+		}
+
 		public function actionLogout(){
 			if(!isset($_POST['access_token'])){
 				HttpResponse::responseBadRequest();
@@ -92,6 +99,22 @@ Yii::import('application.models.Dto.QueryOption');
 					return AjaxHelper::jsonError("Have error in logout");
 				}
 
+			}else{
+				HttpResponse::responseAuthenticationDataIncorrect();
+				return AjaxHelper::jsonError('access_token is not of any user');
+			}
+
+		}
+
+		public function actionGetProfile(){
+			if(!isset($_POST['access_token'])){
+				HttpResponse::responseBadRequest();
+				return AjaxHelper::jsonError('access_token is not empty');
+			}
+			$user = $this->checkAuth($_POST['access_token']);
+			if($user){
+					HttpResponse::responseOk();	
+					return AjaxHelper::jsonSuccess($user, "User profile");
 			}else{
 				HttpResponse::responseAuthenticationDataIncorrect();
 				return AjaxHelper::jsonError('access_token is not of any user');
@@ -154,9 +177,29 @@ Yii::import('application.models.Dto.QueryOption');
 			
 		}
 
+		public function actionEditProfile(){
+			if(!isset($_POST['access_token'])){
+				HttpResponse::responseBadRequest();
+				return AjaxHelper::jsonError('access_token chống');
+			}
+			$user = $this->checkAuth($_POST['access_token']);
+			if(!$user){
+				HttpResponse::responseAuthenticationDataIncorrect();
+				return AjaxHelper::jsonError('Access_token không tồn tại');
+			}
+
+			if($user->update()){
+					HttpResponse::responseOk();	
+					return AjaxHelper::jsonSuccess("Đăng xuất thành công");
+				}else{
+					HttpResponse::responseInternalServerError();
+					return AjaxHelper::jsonError("Có lỗi xảy ra trong quá trình đăng xuất");
+				}
+		}
+
 		public function actionForgotPassword(){
 			if(!isset($_POST['email']) || !Validator::validateEmail($_POST['email'])){
-				return AjaxHelper::jsonError('Email is empty');
+				return AjaxHelper::jsonError('Email chống');
 			}
 		}
 	

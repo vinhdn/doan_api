@@ -3114,3 +3114,43 @@ Stack trace:
 #5 /Applications/XAMPP/xamppfiles/htdocs/doan/framework/base/CApplication.php(180): CWebApplication->processRequest()
 #6 /Applications/XAMPP/xamppfiles/htdocs/doan/index.php(11): CWebApplication->run()
 REQUEST_URI=/doan/address/create
+2015/04/28 19:13:44 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "category/getlist".' in /Applications/XAMPP/xamppfiles/htdocs/doan/framework/web/CWebApplication.php:286
+Stack trace:
+#0 /Applications/XAMPP/xamppfiles/htdocs/doan/framework/web/CWebApplication.php(141): CWebApplication->runController('category/getlis...')
+#1 /Applications/XAMPP/xamppfiles/htdocs/doan/framework/base/CApplication.php(180): CWebApplication->processRequest()
+#2 /Applications/XAMPP/xamppfiles/htdocs/doan/index.php(11): CApplication->run()
+#3 {main}
+REQUEST_URI=/doan/category/getlist
+---
+2015/04/28 19:13:58 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "category/getlist".' in /Applications/XAMPP/xamppfiles/htdocs/doan/framework/web/CWebApplication.php:286
+Stack trace:
+#0 /Applications/XAMPP/xamppfiles/htdocs/doan/framework/web/CWebApplication.php(141): CWebApplication->runController('category/getlis...')
+#1 /Applications/XAMPP/xamppfiles/htdocs/doan/framework/base/CApplication.php(180): CWebApplication->processRequest()
+#2 /Applications/XAMPP/xamppfiles/htdocs/doan/index.php(11): CApplication->run()
+#3 {main}
+REQUEST_URI=/doan/category/getlist
+---
+2015/04/28 19:14:15 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "category/getlist".' in /Applications/XAMPP/xamppfiles/htdocs/doan/framework/web/CWebApplication.php:286
+Stack trace:
+#0 /Applications/XAMPP/xamppfiles/htdocs/doan/framework/web/CWebApplication.php(141): CWebApplication->runController('category/getlis...')
+#1 /Applications/XAMPP/xamppfiles/htdocs/doan/framework/base/CApplication.php(180): CWebApplication->processRequest()
+#2 /Applications/XAMPP/xamppfiles/htdocs/doan/index.php(11): CApplication->run()
+#3 {main}
+REQUEST_URI=/doan/category/getlist
+---
+2015/04/28 19:14:41 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "category/GetList".' in /Applications/XAMPP/xamppfiles/htdocs/doan/framework/web/CWebApplication.php:286
+Stack trace:
+#0 /Applications/XAMPP/xamppfiles/htdocs/doan/framework/web/CWebApplication.php(141): CWebApplication->runController('category/GetLis...')
+#1 /Applications/XAMPP/xamppfiles/htdocs/doan/framework/base/CApplication.php(180): CWebApplication->processRequest()
+#2 /Applications/XAMPP/xamppfiles/htdocs/doan/index.php(11): CApplication->run()
+#3 {main}
+REQUEST_URI=/doan/category/GetList
+---
+2015/04/28 19:14:51 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "category".' in /Applications/XAMPP/xamppfiles/htdocs/doan/framework/web/CWebApplication.php:286
+Stack trace:
+#0 /Applications/XAMPP/xamppfiles/htdocs/doan/framework/web/CWebApplication.php(141): CWebApplication->runController('category')
+#1 /Applications/XAMPP/xamppfiles/htdocs/doan/framework/base/CApplication.php(180): CWebApplication->processRequest()
+#2 /Applications/XAMPP/xamppfiles/htdocs/doan/index.php(11): CApplication->run()
+#3 {main}
+REQUEST_URI=/doan/category
+---

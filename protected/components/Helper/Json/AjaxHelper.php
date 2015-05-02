@@ -13,14 +13,14 @@
 		{
 			if($prettyPrint == false){
 				echo json_encode(array(
-						'error'		=>	0,
+						'success'		=>	1,
 						'message'	=>	$message,
 						'data'		=>	$data
 				));
 			}
 			else{
 				echo AjaxHelper::prettyPrint(json_encode(array(
-						'error'		=>	0,
+						'success'		=>	1,
 						'message'	=>	$message,
 						'data'		=>	$data
 				)));
@@ -32,13 +32,13 @@
 		{
 			if($prettyPrint == false){
 				echo json_encode(array(
-								'error'	=>	1,
+								'success'	=>	0,
 								'message'	=>	$message
 							));
 			}
 			else{
 				echo AjaxHelper::prettyPrint(json_encode(array(
-						'error'	=>	1,
+						'success'	=>	0,
 						'message'	=>	$message
 				)));
 			}

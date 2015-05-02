@@ -75,7 +75,13 @@ Yii::import('application.models.Dto.QueryOption');
 		}
 
 		public function actionGetList(){
-
+			$addresses = Yii::app()->db->createCommand()
+					->select('*')
+					->from('address')
+					->where('state=:id',array(':id'=>0))
+					->queryAll();
+					HttpResponse::responseOk();
+					return AjaxHelper::jsonSuccess($addresses,"list Address");
 		}
 
 		public function actionCreate(){
@@ -185,12 +191,12 @@ Yii::import('application.models.Dto.QueryOption');
 				
 			if(isset($_POST['phone_number']))
 				$address->phone_number = $_POST['phone_number'];
-			$address->date_create = gmmktime();
 			$address->date_update = gmmktime();
+			$address->date_create = gmmktime();
 			$address->id = StringHelper::generateRandomOrderKey(Yii::app()->params['ID_LENGTH']);
 			if($address->save()){
 				HttpResponse::responseOk();
-				return AjaxHelper::jsonSuccess($address->id,"create success");
+				return AjaxHelper::jsonSuccess($address,"create success");
 			}else{
 				HttpResponse::responseInternalServerError();
 				return AjaxHelper::jsonError('Have a error in process Create Address');	
@@ -237,7 +243,7 @@ Yii::import('application.models.Dto.QueryOption');
 				$address->category_id = $_POST['category_id'];
 			$isChangeAvatar = false;
 			$isChangeCover = false;
-			$fileOld = new array();
+			$fileOld = array();
 			$fileOld['avatar'] = $address->avatar;
 			$fileOld['cover'] = $address->cover;
 			// TODO get Avatar
@@ -339,13 +345,13 @@ Yii::import('application.models.Dto.QueryOption');
 						unlink($savePath.'/'. $fileOld['avatar']);
 					}
 					if($isChangeCover){
-						unlink($savePath.'/'. $fileOld['cover']);)
+						unlink($savePath.'/'. $fileOld['cover']);
 					}
 				}catch(Exception $e){
 
 				}
 				HttpResponse::responseOk();
-				return AjaxHelper::jsonSuccess($address->id,"update success");
+				return AjaxHelper::jsonSuccess($address,"update success");
 			}else{
 				HttpResponse::responseInternalServerError();
 				return AjaxHelper::jsonError('Have a error in process Update Address');	
@@ -366,7 +372,7 @@ Yii::import('application.models.Dto.QueryOption');
 			$address->state = 0;
 			if($address->update()){
 				HttpResponse::responseOk();
-				return AjaxHelper::jsonSuccess($address->id,"create success");
+				return AjaxHelper::jsonSuccess($address,"create success");
 			}else{
 				HttpResponse::responseInternalServerError();
 				return AjaxHelper::jsonError('Have error in process update');
@@ -440,6 +446,6 @@ Yii::import('application.models.Dto.QueryOption');
 									->queryAll();
 			return $posts;
 		}
-			}
+			
 	
 	}
