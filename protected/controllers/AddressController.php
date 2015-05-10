@@ -26,18 +26,38 @@ Yii::import('application.models.Dto.QueryOption');
 			// return AjaxHelper::jsonSuccess($address);
 
 			$list_post = $this->getListPostOfAddress($address['id']);
+			$likes = $this->getListLikeAddress($address['id']);
 			// var_dump($list_post);
 			if($list_post){
 				$address['posts'] = $list_post;
+			}else{
+				$address['posts'] = array();
 			}
-
+			if($likes){
+				$address['likes'] = $likes;
+			}else{
+				$address['likes'] = array();
+			}
+			$address['is_like'] = false;
+			$address['is_owner'] = false;	
 			if(isset($_POST['access_token'])){
 				// HttpResponse::responseBadRequest();
 				// return AjaxHelper::jsonError('access_token is not empty');
 				$user = $this->checkAuth($_POST['access_token']);
 				if($user){
-					$condition = 'user_id='.$user['id'].' and address_id='.$address['id'];
-					$like = LikeAddress::model()->find($condition);
+					// $condition = 'user_id='.$user['id'].' and address_id='.$address['id'];
+					// $like = LikeAddress::model()->find($condition);
+					// if($like)
+					// 	$address['is_like'] = true;
+					// else
+					// 	$address['is_like'] = false;
+					$like = Yii::app()->db->createCommand()
+										->select("*")
+										->from("like_address")
+										->where('user_id=:user_id and address_id=:address_id', 
+											array(':user_id'=>$user['id'],':address_id'=>$address['id']))
+										->queryRow();
+										if($like)
 					if($like)
 						$address['is_like'] = true;
 					else
@@ -57,9 +77,12 @@ Yii::import('application.models.Dto.QueryOption');
 			if($rates){
 				if($rates['count_id'] > 0){
 					$address['rate'] = $rates['sum_id'] / $rates['count_id'];
+					$address['rate_number'] = $rates['count_id'];
 				}
-			}else
+			}else{
 				$address['rate'] = null;
+				$address['rate_number'] = 0;
+			}
 			$condition = 'id='.$address['category_id'];
 			$address['category'] = Yii::app()->db->createCommand()
 									->select('*')
@@ -79,28 +102,58 @@ Yii::import('application.models.Dto.QueryOption');
 					->select('*')
 					->from('address')
 					->where('state=:id',array(':id'=>0))
+					->limit((int)20)
 					->queryAll();
 					HttpResponse::responseOk();
 					return AjaxHelper::jsonSuccess($addresses,"list Address");
 		}
 
+		/**
+		 * [actionCreate description]
+		 * @param id
+		 * @param access_token
+		 * @param email
+		 * @param url
+		 * @param name
+		 * @param category_id
+		 * @param about
+		 * @param lat
+		 * @param lng
+		 * @param address
+		 * @param street_number
+		 * @param phone_number
+		 * @return [type] [description]
+		 */
 		public function actionCreate(){
-			$address = new Address;
-			if(isset($_POST['access_token'])){
-				$user = $this->checkAuth($_POST['access_token']);
-				if($user){
-					$address->owner_id = $user["id"];
-				}else{
-					HttpResponse::responseAuthenticationFailure();
-					AjaxHelper::jsonError('Authentication is failure');	
+			if(isset($_POST["id"])){	
+				$addressP = Address::model()->findByAttributes(array('id'=>$_POST['id']));
+				if($addressP){
+					HttpResponse::responseConflict();
+					return AjaxHelper::jsonError('Address ID = '. $_POST['id'] .' is existed');
 				}
-			}else{
-				HttpResponse::responseBadRequest();
-				return AjaxHelper::jsonError('access_token is empty');
 			}
-
+			$address = new Address;
+			if(isset($_POST['user_id'])){
+			$address->owner_id = $_POST["user_id"];
+			}else{
+				if(isset($_POST['access_token'])){
+					$user = $this->checkAuth($_POST['access_token']);
+					if($user){
+						$address->owner_id = $user["id"];
+					}else{
+						HttpResponse::responseAuthenticationFailure();
+						AjaxHelper::jsonError('Authentication is failure');	
+					}
+				}else{
+					HttpResponse::responseBadRequest();
+					return AjaxHelper::jsonError('access_token is empty');
+				}
+			}
 			if(isset($_POST['email']))
 				$address->email = $_POST['email'];
+
+			if(isset($_POST['url']))
+				$address->url = $_POST['url'];
 			if(isset($_POST['name']))
 				$address->name = $_POST['name'];
 			else{
@@ -170,7 +223,6 @@ Yii::import('application.models.Dto.QueryOption');
                            }
 			}
 
-
 			if(isset($_POST['about']))
 				$address->about = $_POST['about'];
 			
@@ -191,10 +243,40 @@ Yii::import('application.models.Dto.QueryOption');
 				
 			if(isset($_POST['phone_number']))
 				$address->phone_number = $_POST['phone_number'];
+
+			if(isset($_POST['rate']))
+				$address->rate = $_POST['rate'];
+			if(isset($_POST['rate_number']))
+				$address->rate_number = $_POST['rate_number'];
 			$address->date_update = gmmktime();
 			$address->date_create = gmmktime();
-			$address->id = StringHelper::generateRandomOrderKey(Yii::app()->params['ID_LENGTH']);
+			if(isset($_POST["id"])){
+				$address->state = 0;
+			}else
+			$address->state = 1;
+			if(isset($_POST["id"]))
+				$address->id = $_POST["id"];
+			else
+				$address->id = StringHelper::generateRandomOrderKey(Yii::app()->params['ID_LENGTH']);
 			if($address->save()){
+				if(isset($_POST['time_open'])){
+				$time_opens = $_POST['time_open'];
+				try {
+					$time_array = explode(";", $time_open);
+					if($time_array){
+						foreach ($time_array as $time) {
+							$times = explode("*", $time);
+							$to = new TimeOpen;
+							$to->address_id = $address->id;
+							$to->weekday = $times[0];
+							$to->time_open = $times[1];
+							$to->save();
+						}
+					}
+				} catch (Exception $e) {
+					
+				}
+			}
 				HttpResponse::responseOk();
 				return AjaxHelper::jsonSuccess($address,"create success");
 			}else{
@@ -209,8 +291,7 @@ Yii::import('application.models.Dto.QueryOption');
 				HttpResponse::responseBadRequest();
 				return AjaxHelper::jsonError('id is empty');
 			}
-			$condition = "id=".$_POST['id'];
-			$address = Address::model()->find($condition);
+			$address = Address::model()->findByAttributes(array('id'=>$_POST['id']));
 			if(!$address){
 				HttpResponse::responseNotFound();
 				return AjaxHelper::jsonError('Address ID = '. $_POST['id'] .' not found');
@@ -429,6 +510,70 @@ Yii::import('application.models.Dto.QueryOption');
 
 		}
 
+		public function actionLike(){
+			$address = new LikeAddress;
+			if(!isset($_POST['address_id'])){
+				HttpResponse::responseBadRequest();
+					return AjaxHelper::jsonError('address_id is empty');
+			}
+			if(isset($_POST['user_id'])){
+				$address->user_id = $_POST["user_id"];
+			}else{
+				if(isset($_POST['access_token'])){
+					$user = $this->checkAuth($_POST['access_token']);
+					if($user){
+						$address->user_id = $user["id"];
+					}else{
+						HttpResponse::responseAuthenticationFailure();
+						AjaxHelper::jsonError('Authentication is failure');	
+					}
+				}else{
+					HttpResponse::responseBadRequest();
+					return AjaxHelper::jsonError('access_token is empty');
+				}
+			}
+			$address->address_id = $_POST['address_id'];
+			if($address->save()){
+				HttpResponse::responseOk();
+				return AjaxHelper::jsonSuccess("liked success");
+			}else{
+				HttpResponse::responseConflict();
+				return AjaxHelper::jsonError('Liked or Have error in process create report');	
+			}
+		}
+
+		public function actionDisLike(){
+			$address = new LikeAddress;
+			if(!isset($_POST['address_id'])){
+				HttpResponse::responseBadRequest();
+					return AjaxHelper::jsonError('address_id is empty');
+			}
+			if(isset($_POST['user_id'])){
+				$address->user_id = $_POST["user_id"];
+			}else{
+				if(isset($_POST['access_token'])){
+					$user = $this->checkAuth($_POST['access_token']);
+					if($user){
+						$address->user_id = $user["id"];
+					}else{
+						HttpResponse::responseAuthenticationFailure();
+						AjaxHelper::jsonError('Authentication is failure');	
+					}
+				}else{
+					HttpResponse::responseBadRequest();
+					return AjaxHelper::jsonError('access_token is empty');
+				}
+			}
+			$address->address_id = $_POST['address_id'];
+			if($address->delete()){
+				HttpResponse::responseOk();
+				return AjaxHelper::jsonSuccess("dislike success");
+			}else{
+				HttpResponse::responseConflict();
+				return AjaxHelper::jsonError('Liked or Have error in process create report');	
+			}
+		}
+
 		public function checkAuth($token){
 			$user = Yii::app()->db->createCommand()
 			->select('*')
@@ -444,8 +589,32 @@ Yii::import('application.models.Dto.QueryOption');
 									->from('post')
 									->where('address_id=:address_id and state = 0',array(':address_id'=>$address_id))
 									->queryAll();
+			foreach ($posts as $var => $post) {
+				$posts[$var]['user'] = Yii::app()->db->createCommand()
+								->select('id, first_name, last_name, avatar_url, avatar')
+								->from('user')
+								->where('id=:token',array(':token'=>$post['owner_id']))
+								->queryRow();
+			}
+			
 			return $posts;
 		}
+		
+		public function getListLikeAddress($address_id){
+			$likes = Yii::app()->db->createCommand()
+									->select('*')
+									->from('like_address')
+									->where('address_id=:address_id',array(':address_id'=>$address_id))
+									->queryAll();
+			foreach ($likes as $var => $like) {
+				$likes[$var] = Yii::app()->db->createCommand()
+								->select('id, first_name, last_name, avatar_url, avatar')
+								->from('user')
+								->where('id=:token',array(':token'=>$like['user_id']))
+								->queryRow();
+			}
 			
+			return $likes;
+		}	
 	
 	}

@@ -123,30 +123,41 @@ Yii::import('application.models.Dto.QueryOption');
 		}
 
 		public function actionRegister(){
-			if(!isset($_POST['email']) || !Validator::validateEmail($_POST['email'])){
-				return AjaxHelper::jsonError('Email is empty');
-			}
-			if(!isset($_POST['password']))
-				return AjaxHelper::jsonError('password is empty');
-			if(strlen($_POST['password']) < 6)
-				return AjaxHelper::jsonError('password must > 5 character');
-			if(!isset($_POST['first_name']))
-				return AjaxHelper::jsonError('first_name is empty');
-			if(!isset($_POST['last_name']))
-				return AjaxHelper::jsonError('last_name is empty');
-			if(!isset($_POST['first_name']))
-				return AjaxHelper::jsonError('first_name is empty');
-			if(!isset($_POST['birthday']))
-				return AjaxHelper::jsonError('birthday is empty');
-			if(!isset($_POST['gender']))
-				return AjaxHelper::jsonError('gender is empty');
-
 			$user = new User;
-			$user->email = $_POST['email'];
-			$user->password = $_POST['password'];
+			if(isset($_POST['id'])){
+				$address = User::model()->findByAttributes(array('id'=>$_POST['id']));
+				if($address){
+					HttpResponse::responseConflict();
+					return AjaxHelper::jsonError('User ID = '. $_POST['id'] .' is existed');
+				}
+				$user->id =$_POST['id'];
+				$user->email = $user->id ."@vinhdo.me";
+				$user->password = "123456";
+				$user->avatar_url = $_POST['avatar_url'];
+			}else{
+				if(!isset($_POST['email']) || !Validator::validateEmail($_POST['email'])){
+					return AjaxHelper::jsonError('Email is empty');
+				}
+				if(!isset($_POST['password']))
+					return AjaxHelper::jsonError('password is empty');
+				if(strlen($_POST['password']) < 6)
+					return AjaxHelper::jsonError('password must > 5 character');
+				if(!isset($_POST['first_name']))
+					return AjaxHelper::jsonError('first_name is empty');
+				if(!isset($_POST['last_name']))
+					return AjaxHelper::jsonError('last_name is empty');
+				if(!isset($_POST['first_name']))
+					return AjaxHelper::jsonError('first_name is empty');
+				if(!isset($_POST['birthday']))
+					return AjaxHelper::jsonError('birthday is empty');
+				if(!isset($_POST['gender']))
+					return AjaxHelper::jsonError('gender is empty');
+				$user->birthday = $_POST['birthday'];
+				$user->email = $_POST['email'];
+				$user->password = $_POST['password'];
+			}
 			$user->first_name = $_POST['first_name'];
-			$user->last_name = $_POST['last_name'];
-			$user->birthday = $_POST['birthday'];
+			$user->last_name = (isset($_POST['last_name'])) ? $_POST['last_name'] : '';
 			$user->gender = $_POST['gender'];
 			$user->facebook_id = (isset($_POST['facebook_id'])) ? $_POST['facebook_id'] : '';
 			$user->address = (isset($_POST['address'])) ? $_POST['address'] : '';
@@ -159,17 +170,23 @@ Yii::import('application.models.Dto.QueryOption');
 			 */
 			$access_token = StringHelper::generateRandomString(Yii::app()->params['ACCESS_TOKEN_LENGTH']);
 			$user->access_token = $access_token;
-			$user->id = StringHelper::generateRandomOrderKey(Yii::app()->params['ID_LENGTH']);
+			if(!isset($_POST['id'])){
+				$user->id = StringHelper::generateRandomOrderKey(Yii::app()->params['ID_LENGTH']);
+			}
 			$user->date_create = gmmktime();
 			$user->date_update = gmmktime();
 			if($user->save()){
 				HttpResponse::responseOk();
+				if(isset($_POST['id'])){
+					return AjaxHelper::jsonSuccess($user->id,'Register sucees');
+				}else{
 					$user = Yii::app()->db->createCommand()
 					->select('id, facebook_id,first_name,last_name,lat,lng,birthday,gender,email,access_token')
 					->from('user')
 					->where('access_token=:token',array(':token'=>$access_token))
 					->queryRow();
 					return AjaxHelper::jsonSuccess($user,'Register sucees');
+				}
 				}else{
 					HttpResponse::responseInternalServerError();
 					return AjaxHelper::jsonError("Have error on register");
