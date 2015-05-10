@@ -11,7 +11,7 @@ Yii::import('application.models.Dto.QueryOption');
 		public function actionGetInfo(){
 			if(!isset($_POST['id'])){
 				HttpResponse::responseBadRequest();
-				return AjaxHelper::jsonError('id is not empty');
+				return AjaxHelper::jsonError('id is empty');
 			}
 			$address = Yii::app()->db->createCommand()
 					->select('*')
@@ -98,12 +98,30 @@ Yii::import('application.models.Dto.QueryOption');
 		}
 
 		public function actionGetList(){
-			$addresses = Yii::app()->db->createCommand()
-					->select('*')
-					->from('address')
-					->where('state=:id',array(':id'=>0))
-					->limit((int)20)
-					->queryAll();
+			if(!isset($_POST['lat'])){
+				HttpResponse::responseBadRequest();
+				return AjaxHelper::jsonError('lat is empty');
+			}
+			if(!isset($_POST['lng'])){
+				HttpResponse::responseBadRequest();
+				return AjaxHelper::jsonError('lng is empty');
+			}
+			$dist = 2000;
+			if(isset($_POST['dist'])){
+				$dist = $_POST['dist'];
+			}
+			$limit = 20;
+			if(isset($_POST['limit'])){
+				$limit = $_POST['limit'];
+			}
+			$query = '';
+			if(isset($_POST['q'])){
+				$query = $_POST['q'];
+			}
+			
+			$addresses = Yii::app()->db->createCommand('call geodist('.$_POST['lat'].', '.$_POST['lng'].', '.$dist.', '.$limit.', \''.$query.'\')')
+										->queryAll();
+
 					HttpResponse::responseOk();
 					return AjaxHelper::jsonSuccess($addresses,"list Address");
 		}
