@@ -159,7 +159,8 @@ class PostController extends Controller
 					$image->url = $image_name;
 					$image->content = $post->content;
 					if($image->save()){
-
+						$address->cover = $image_name;
+						$address->update();
 					}
 				}
 				$post = Yii::app()->db->createCommand()

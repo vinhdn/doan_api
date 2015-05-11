@@ -89,20 +89,27 @@ Yii::import('application.models.Dto.QueryOption');
 									->from('category')
 									->where('id=:token',array(':token'=>$address['category_id']))
 									->queryRow();
-			$img = Yii::app()->db->createCommand()
-										->select('image')
-										->from('post')
-										->where('address_id=:token and image NOT LIKE \'\' and state = 0',array(':token'=>$address['id']))
-									->queryRow();
-			if($img){
-				$address['best_photo'] = $img['image'];
-			}
 			$address['time_open'] = Yii::app()->db->createCommand()
 									->select('weekday, time_open, time_close')
 									->from('time_open')
 									->where('address_id=:address_id',array(':address_id'=>$address['id']))
 									->queryAll();
 			return AjaxHelper::jsonSuccess($address,"Address get info success");
+		}
+
+		public function actionUpdateCover(){
+			$addresses = Address::model()->findAll();
+			foreach ($addresses as $var => $address) {
+				$img = Yii::app()->db->createCommand()
+										->select('image')
+										->from('post')
+										->where('address_id=:token and image NOT LIKE \'\'',array(':token'=>$address->id))
+									->queryRow();
+				if($img){
+					$addresses[$var]->cover = $img['image'];
+					$addresses[$var]->update();
+				}
+			}
 		}
 
 		public function actionGetList(){
@@ -126,8 +133,11 @@ Yii::import('application.models.Dto.QueryOption');
 			if(isset($_POST['q'])){
 				$query = $_POST['q'];
 			}
-			
-			$addresses = Yii::app()->db->createCommand('call geodist('.$_POST['lat'].', '.$_POST['lng'].', '.$dist.', '.$limit.', \''.$query.'\')')
+			$cate = '';
+			if(isset($_POST['category_id'])){
+				$cate = $_POST['category_id'];
+			}
+			$addresses = Yii::app()->db->createCommand('call geodist('.$_POST['lat'].', '.$_POST['lng'].', '.$dist.', '.$limit.', \''.$query.'\''.', \''.$cate.'\')')
 										->queryAll();
 
 			foreach ($addresses as $var => $address) {
