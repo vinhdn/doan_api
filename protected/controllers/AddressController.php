@@ -16,7 +16,7 @@ Yii::import('application.models.Dto.QueryOption');
 			$address = Yii::app()->db->createCommand()
 					->select('*')
 					->from('address')
-					->where('id=:id',array(':id'=>$_POST['id']))
+					->where('id=:id and state = 0',array(':id'=>$_POST['id']))
 					->queryRow();
 
 			// Address::model()->find('id=:id',array(':id'=>$_POST['id']));
@@ -89,6 +89,14 @@ Yii::import('application.models.Dto.QueryOption');
 									->from('category')
 									->where('id=:token',array(':token'=>$address['category_id']))
 									->queryRow();
+			$img = Yii::app()->db->createCommand()
+										->select('image')
+										->from('post')
+										->where('address_id=:token and image NOT LIKE \'\' and state = 0',array(':token'=>$address['id']))
+									->queryRow();
+			if($img){
+				$address['best_photo'] = $img['image'];
+			}
 			$address['time_open'] = Yii::app()->db->createCommand()
 									->select('weekday, time_open, time_close')
 									->from('time_open')
@@ -122,6 +130,14 @@ Yii::import('application.models.Dto.QueryOption');
 			$addresses = Yii::app()->db->createCommand('call geodist('.$_POST['lat'].', '.$_POST['lng'].', '.$dist.', '.$limit.', \''.$query.'\')')
 										->queryAll();
 
+			foreach ($addresses as $var => $address) {
+				$addresses[$var]['category'] = Yii::app()->db->createCommand()
+									->select('*')
+									->from('category')
+									->where('id=:token',array(':token'=>$address['category_id']))
+									->queryRow();
+			}
+			
 					HttpResponse::responseOk();
 					return AjaxHelper::jsonSuccess($addresses,"list Address");
 		}
