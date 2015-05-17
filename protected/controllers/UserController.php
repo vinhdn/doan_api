@@ -27,7 +27,7 @@ Yii::import('application.models.Dto.QueryOption');
 				if($user->save()){
 					HttpResponse::responseOk();
 					$user = Yii::app()->db->createCommand()
-					->select('id, facebook_id,first_name,last_name,lat,lng,birthday,gender,email,access_token')
+					->select('id, facebook_id,first_name,last_name,lat,lng,birthday,gender,email,access_token, avatar_url')
 					->from('user')
 					->where('access_token=:token',array(':token'=>$access_token))
 					->queryRow();
@@ -79,7 +79,7 @@ Yii::import('application.models.Dto.QueryOption');
 			if(!isset($_POST['access_token'])){
 				HttpResponse::responseBadRequest();
 				return AjaxHelper::jsonError('access_token is not empty');
-			}	
+			}
 		}
 
 		public function actionLogout(){
@@ -89,10 +89,10 @@ Yii::import('application.models.Dto.QueryOption');
 			}
 			$user = $this->checkAuth($_POST['access_token']);
 			if($user){
-				
+
 				$user->access_token = "";
 				if($user->update()){
-					HttpResponse::responseOk();	
+					HttpResponse::responseOk();
 					return AjaxHelper::jsonSuccess("Logout success");
 				}else{
 					HttpResponse::responseInternalServerError();
@@ -113,7 +113,7 @@ Yii::import('application.models.Dto.QueryOption');
 			}
 			$user = $this->checkAuth($_POST['access_token']);
 			if($user){
-					HttpResponse::responseOk();	
+					HttpResponse::responseOk();
 					return AjaxHelper::jsonSuccess($user, "User profile");
 			}else{
 				HttpResponse::responseAuthenticationDataIncorrect();
@@ -168,6 +168,31 @@ Yii::import('application.models.Dto.QueryOption');
 			/**
 			 * Avatar
 			 */
+			$savePath = Yii::app()->params['ASSETS_FOLDER'];
+			if(isset($_FILES['avatar'])){
+				           $allowedExts  =  array("gif", "jpeg", "jpg", "png");
+                           $temp    =  explode(".", $_FILES["avatar"]["name"]);
+                           $extension   =  end($temp);
+
+                           if ((($_FILES["avatar"]["type"] == "image/gif")
+                           || ($_FILES["avatar"]["type"] == "image/jpeg")
+                           || ($_FILES["avatar"]["type"] == "image/jpg")
+                           || ($_FILES["avatar"]["type"] == "image/pjpeg")
+                           || ($_FILES["avatar"]["type"] == "image/x-png")
+                           || ($_FILES["avatar"]["type"] == "image/png")
+                           || ($_FILES["avatar"]["type"] == "application/octet-stream"))
+                           && in_array($extension, $allowedExts)) {
+                           	if($_FILES['avatar']['error'] > 0){
+                           		HttpResponse::responseForbidden();
+                           		return AjaxHelper::jsonError('have a error in file avatar upload');
+                           	}
+
+							$image_name = StringHelper::generateRandomString(15).'.'.$extension;
+                           	move_uploaded_file($_FILES["avatar"]["tmp_name"],$savePath.'/'.$image_name);
+                           	$user->avatar = $image_name;
+														$user->avatar_url = $image_name;
+                           }
+			}
 			$access_token = StringHelper::generateRandomString(Yii::app()->params['ACCESS_TOKEN_LENGTH']);
 			$user->access_token = $access_token;
 			if(!isset($_POST['id'])){
@@ -181,7 +206,7 @@ Yii::import('application.models.Dto.QueryOption');
 					return AjaxHelper::jsonSuccess($user->id,'Register sucees');
 				}else{
 					$user = Yii::app()->db->createCommand()
-					->select('id, facebook_id,first_name,last_name,lat,lng,birthday,gender,email,access_token')
+					->select('id, facebook_id,first_name,last_name,lat,lng,birthday,gender,email,access_token,avatar, avatar_url')
 					->from('user')
 					->where('access_token=:token',array(':token'=>$access_token))
 					->queryRow();
@@ -191,26 +216,55 @@ Yii::import('application.models.Dto.QueryOption');
 					HttpResponse::responseInternalServerError();
 					return AjaxHelper::jsonError("Have error on register");
 				}
-			
+
 		}
 
 		public function actionEditProfile(){
 			if(!isset($_POST['access_token'])){
 				HttpResponse::responseBadRequest();
-				return AjaxHelper::jsonError('access_token chống');
+				return AjaxHelper::jsonError('access_token is empty');
 			}
 			$user = $this->checkAuth($_POST['access_token']);
 			if(!$user){
 				HttpResponse::responseAuthenticationDataIncorrect();
-				return AjaxHelper::jsonError('Access_token không tồn tại');
+				return AjaxHelper::jsonError('Access_token is not correct');
+			}
+
+			/**
+			 * Avatar
+			 */
+			$savePath = Yii::app()->params['ASSETS_FOLDER'];
+			if(isset($_FILES['avatar'])){
+				           $allowedExts  =  array("gif", "jpeg", "jpg", "png");
+                           $temp    =  explode(".", $_FILES["avatar"]["name"]);
+                           $extension   =  end($temp);
+
+                           if ((($_FILES["avatar"]["type"] == "image/gif")
+                           || ($_FILES["avatar"]["type"] == "image/jpeg")
+                           || ($_FILES["avatar"]["type"] == "image/jpg")
+                           || ($_FILES["avatar"]["type"] == "image/pjpeg")
+                           || ($_FILES["avatar"]["type"] == "image/x-png")
+                           || ($_FILES["avatar"]["type"] == "image/png")
+                           || ($_FILES["avatar"]["type"] == "application/octet-stream"))
+                           && in_array($extension, $allowedExts)) {
+                           	if($_FILES['avatar']['error'] > 0){
+                           		HttpResponse::responseForbidden();
+                           		return AjaxHelper::jsonError('have a error in file avatar upload');
+                           	}
+
+							$image_name = StringHelper::generateRandomString(15).'.'.$extension;
+                           	move_uploaded_file($_FILES["avatar"]["tmp_name"],$savePath.'/'.$image_name);
+                           	$user->avatar = $image_name;
+														$user->avatar_url = $image_name;
+                           }
 			}
 
 			if($user->update()){
-					HttpResponse::responseOk();	
-					return AjaxHelper::jsonSuccess("Đăng xuất thành công");
+					HttpResponse::responseOk();
+					return AjaxHelper::jsonSuccess("Update Success");
 				}else{
 					HttpResponse::responseInternalServerError();
-					return AjaxHelper::jsonError("Có lỗi xảy ra trong quá trình đăng xuất");
+					return AjaxHelper::jsonError("Have error on update profile");
 				}
 		}
 
@@ -219,5 +273,5 @@ Yii::import('application.models.Dto.QueryOption');
 				return AjaxHelper::jsonError('Email chống');
 			}
 		}
-	
+
 	}

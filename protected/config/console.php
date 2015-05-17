@@ -4,5 +4,5 @@
 // Any writable CConsoleApplication properties can be configured here.
 return array(
 	'basePath'=>dirname(__FILE__).DIRECTORY_SEPARATOR.'..',
-	'name'=>'English Listening A-Z',
+	'name'=>'Đồ án 2015',
 );

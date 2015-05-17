@@ -1,6 +1,6 @@
 <?php
 /**
-* 			
+*
 */
 class PostController extends Controller
 {
@@ -84,7 +84,7 @@ class PostController extends Controller
 						$post->owner_id = $user["id"];
 					}else{
 						HttpResponse::responseAuthenticationFailure();
-						AjaxHelper::jsonError('Authentication is failure');	
+						AjaxHelper::jsonError('Authentication is failure');
 					}
 				}else{
 					HttpResponse::responseBadRequest();
@@ -97,14 +97,14 @@ class PostController extends Controller
 			}
 			if(!isset($_POST['content'])){
 				HttpResponse::responseBadRequest();
-				return AjaxHelper::jsonError('content is empty');	
+				return AjaxHelper::jsonError('content is empty');
 			}
 			$address = Address::model()->findByAttributes(array('id'=>$_POST['address_id']));
 			if(!$address){
 				HttpResponse::responseNotFound();
 				return AjaxHelper::jsonError('Address ID = '. $_POST['address_id'] .' not found');
 			}
-			$savePath = dirname(__FILE__) . '/assets/images';
+			$savePath = Yii::app()->params['ASSETS_FOLDER'];
 			$image_name = "";
 			if(isset($_POST['photo'])){
 				$post->image = $_POST['photo'];
@@ -127,10 +127,7 @@ class PostController extends Controller
 	                           		HttpResponse::responseForbidden();
 	                           		return AjaxHelper::jsonError('have a error in file image upload');
 	                           	}
-	                           	
-								if (!file_exists($savePath)) {
-	    							mkdir($savePath, 0777, true);
-								}
+
 								$image_name = StringHelper::generateRandomString(15).'.'.$extension;
 	                           	move_uploaded_file($_FILES["image"]["tmp_name"],$savePath.'/'.$image_name);
 	                           	$post->image = $image_name;
@@ -171,7 +168,7 @@ class PostController extends Controller
 				return AjaxHelper::jsonSuccess($post,"create success");
 			}else{
 				HttpResponse::responseInternalServerError();
-				return AjaxHelper::jsonError('Have a error in process Create Post');	
+				return AjaxHelper::jsonError('Have a error in process Create Post');
 			}
 	}
 
@@ -199,17 +196,17 @@ class PostController extends Controller
 				if($user){
 					if($post->owner_id != $user["id"]){
 						HttpResponse::responseForbidden();
-						AjaxHelper::jsonError('no permission to edit this post');		
+						AjaxHelper::jsonError('no permission to edit this post');
 					}
 				}else{
 					HttpResponse::responseAuthenticationFailure();
-					AjaxHelper::jsonError('Authentication is failure');	
+					AjaxHelper::jsonError('Authentication is failure');
 				}
 			}else{
 				HttpResponse::responseBadRequest();
 				return AjaxHelper::jsonError('access_token is empty');
 			}
-			$savePath = dirname(__FILE__) . '/assets/images';
+			$savePath = Yii::app()->params['ASSETS_FOLDER'];
 			if(isset($_FILES['image'])){
 				           $allowedExts  =  array("gif", "jpeg", "jpg", "png");
                            $temp    =  explode(".", $_FILES["image"]["name"]);
@@ -227,10 +224,6 @@ class PostController extends Controller
                            		HttpResponse::responseForbidden();
                            		return AjaxHelper::jsonError('have a error in file image upload');
                            	}
-                           	
-							if (!file_exists($savePath)) {
-    							mkdir($savePath, 0777, true);
-							}
 							$image_name = StringHelper::generateRandomString(15).'.'.$extension;
                            	move_uploaded_file($_FILES["image"]["tmp_name"],$savePath.'/'.$image_name);
                            	$post->image = $image_name;
@@ -250,8 +243,8 @@ class PostController extends Controller
 				return AjaxHelper::jsonSuccess($post,"update success");
 			}else{
 				HttpResponse::responseInternalServerError();
-				return AjaxHelper::jsonError('Have a error in process Create Post');	
-			}	
+				return AjaxHelper::jsonError('Have a error in process Create Post');
+			}
 	}
 
 	public function actionDelete(){
@@ -270,11 +263,11 @@ class PostController extends Controller
 				if($user){
 					if($post->owner_id != $user["id"]){
 						HttpResponse::responseForbidden();
-						AjaxHelper::jsonError('no permission to delete this post');		
+						AjaxHelper::jsonError('no permission to delete this post');
 					}
 				}else{
 					HttpResponse::responseAuthenticationFailure();
-					AjaxHelper::jsonError('Authentication is failure');	
+					AjaxHelper::jsonError('Authentication is failure');
 				}
 			}else{
 				HttpResponse::responseBadRequest();
@@ -286,7 +279,7 @@ class PostController extends Controller
 				return AjaxHelper::jsonSuccess($post->id,"delete success");
 			}else{
 				HttpResponse::responseInternalServerError();
-				return AjaxHelper::jsonError('Have a error in process delete Post');	
+				return AjaxHelper::jsonError('Have a error in process delete Post');
 			}
 	}
 

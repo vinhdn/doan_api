@@ -7,7 +7,7 @@
 // CWebApplication properties can be configured here.
 return array(
 	'basePath'=>dirname(__FILE__).DIRECTORY_SEPARATOR.'..',
-	'name'=>'English Listening A-Z API',
+	'name'=>'Đồ án 2015 API',
 
 	// preloading 'log' component
 	'preload'=>array('log'),
@@ -73,12 +73,12 @@ return array(
 			'tablePrefix' => 'tbl_',
 		),*/
 		// uncomment the following to use a MySQL database
-		
+
 		'db'=>array(
 			'connectionString' => 'mysql:host=localhost;dbname=nearyou',
 			'emulatePrepare' => true,
 			'username' => 'root',
-			'password' => '',
+			'password' => 'damthatbai2015',
 			'charset' => 'utf8',
 			'tablePrefix' => '',
 		),

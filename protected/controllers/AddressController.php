@@ -39,7 +39,7 @@ Yii::import('application.models.Dto.QueryOption');
 				$address['likes'] = array();
 			}
 			$address['is_like'] = false;
-			$address['is_owner'] = false;	
+			$address['is_owner'] = false;
 			if(isset($_POST['access_token'])){
 				// HttpResponse::responseBadRequest();
 				// return AjaxHelper::jsonError('access_token is not empty');
@@ -54,7 +54,7 @@ Yii::import('application.models.Dto.QueryOption');
 					$like = Yii::app()->db->createCommand()
 										->select("*")
 										->from("like_address")
-										->where('user_id=:user_id and address_id=:address_id', 
+										->where('user_id=:user_id and address_id=:address_id',
 											array(':user_id'=>$user['id'],':address_id'=>$address['id']))
 										->queryRow();
 										if($like)
@@ -147,7 +147,7 @@ Yii::import('application.models.Dto.QueryOption');
 									->where('id=:token',array(':token'=>$address['category_id']))
 									->queryRow();
 			}
-			
+
 					HttpResponse::responseOk();
 					return AjaxHelper::jsonSuccess($addresses,"list Address");
 		}
@@ -169,7 +169,7 @@ Yii::import('application.models.Dto.QueryOption');
 		 * @return [type] [description]
 		 */
 		public function actionCreate(){
-			if(isset($_POST["id"])){	
+			if(isset($_POST["id"])){
 				$addressP = Address::model()->findByAttributes(array('id'=>$_POST['id']));
 				if($addressP){
 					HttpResponse::responseConflict();
@@ -186,7 +186,7 @@ Yii::import('application.models.Dto.QueryOption');
 						$address->owner_id = $user["id"];
 					}else{
 						HttpResponse::responseAuthenticationFailure();
-						AjaxHelper::jsonError('Authentication is failure');	
+						AjaxHelper::jsonError('Authentication is failure');
 					}
 				}else{
 					HttpResponse::responseBadRequest();
@@ -202,17 +202,17 @@ Yii::import('application.models.Dto.QueryOption');
 				$address->name = $_POST['name'];
 			else{
 				HttpResponse::responseBadRequest();
-				return AjaxHelper::jsonError('name is empty');	
+				return AjaxHelper::jsonError('name is empty');
 			}
 
 			if(isset($_POST['category_id']))
 				$address->category_id = $_POST['category_id'];
 			else{
 				HttpResponse::responseBadRequest();
-				return AjaxHelper::jsonError('category_id is empty');	
+				return AjaxHelper::jsonError('category_id is empty');
 			}
-			$savePath = dirname(__FILE__) . '/assets/images';
-			
+			$savePath = Yii::app()->params['ASSETS_FOLDER'];
+
 			// TODO get Avatar
 			if(isset($_FILES['avatar'])){
 				           $allowedExts  =  array("gif", "jpeg", "jpg", "png");
@@ -231,10 +231,6 @@ Yii::import('application.models.Dto.QueryOption');
                            		HttpResponse::responseForbidden();
                            		return AjaxHelper::jsonError('have a error in file avatar upload');
                            	}
-                           	
-							if (!file_exists($savePath)) {
-    							mkdir($savePath, 0777, true);
-							}
 							$avatar_name = StringHelper::generateRandomString(15).'.'.$extension;
                            	move_uploaded_file($_FILES["avatar"]["tmp_name"],$savePath.'/'.$avatar_name);
                            	$address->avatar = $avatar_name;
@@ -258,9 +254,6 @@ Yii::import('application.models.Dto.QueryOption');
                            		HttpResponse::responseForbidden();
                            		return AjaxHelper::jsonError('have a error in file cover upload');
                            	}
-       //                     	if (!file_exists('../asset/images')) {
-    			// 				mkdir('../asset/images', 0777, true);
-							// }
 							$cover_name = StringHelper::generateRandomString(15).'.'.$extension;
                            	move_uploaded_file($_FILES["cover"]["tmp_name"],$savePath.'/'.$cover_name);
                            	$address->cover = $cover_name;
@@ -269,7 +262,7 @@ Yii::import('application.models.Dto.QueryOption');
 
 			if(isset($_POST['about']))
 				$address->about = $_POST['about'];
-			
+
 			if(isset($_POST['lat']))
 				$address->lat = $_POST['lat'];
 
@@ -281,10 +274,10 @@ Yii::import('application.models.Dto.QueryOption');
 
 			if(isset($_POST['city']))
 				$address->city = $_POST['city'];
-			
+
 			if(isset($_POST['street_number']))
 				$address->street_number = $_POST['street_number'];
-				
+
 			if(isset($_POST['phone_number']))
 				$address->phone_number = $_POST['phone_number'];
 
@@ -318,14 +311,14 @@ Yii::import('application.models.Dto.QueryOption');
 						}
 					}
 				} catch (Exception $e) {
-					
+
 				}
 			}
 				HttpResponse::responseOk();
 				return AjaxHelper::jsonSuccess($address,"create success");
 			}else{
 				HttpResponse::responseInternalServerError();
-				return AjaxHelper::jsonError('Have a error in process Create Address');	
+				return AjaxHelper::jsonError('Have a error in process Create Address');
 			}
 
 		}
@@ -345,12 +338,12 @@ Yii::import('application.models.Dto.QueryOption');
 				if($user){
 					if($address['owner_id'] != $user['id']){
 						HttpResponse::responseAuthenticationFailure();
-						AjaxHelper::jsonError('User not have permission to update data');		
+						AjaxHelper::jsonError('User not have permission to update data');
 					}
-					
+
 				}else{
 					HttpResponse::responseAuthenticationFailure();
-					AjaxHelper::jsonError('Authentication is failure');	
+					AjaxHelper::jsonError('Authentication is failure');
 				}
 			}else{
 				HttpResponse::responseBadRequest();
@@ -372,6 +365,7 @@ Yii::import('application.models.Dto.QueryOption');
 			$fileOld['avatar'] = $address->avatar;
 			$fileOld['cover'] = $address->cover;
 			// TODO get Avatar
+			$savePath = Yii::app()->params['ASSETS_FOLDER'];
 			if(isset($_FILES['avatar'])){
 				           $allowedExts  =  array("gif", "jpeg", "jpg", "png");
                            $temp    =  explode(".", $_FILES["avatar"]["name"]);
@@ -389,11 +383,6 @@ Yii::import('application.models.Dto.QueryOption');
                            		HttpResponse::responseForbidden();
                            		return AjaxHelper::jsonError('have a error in file avatar upload');
                            	}
-                           	
-							$savePath = dirname(__FILE__) . '/assets/images';
-							if (!file_exists($savePath)) {
-    							mkdir($savePath, 0777, true);
-							}
 							$avatar_name = StringHelper::generateRandomString(15).'.'.$extension;
                            	move_uploaded_file($_FILES["avatar"]["tmp_name"],$savePath.'/'.$avatar_name);
                            	$isChangeAvatar = true;
@@ -418,10 +407,6 @@ Yii::import('application.models.Dto.QueryOption');
                            		HttpResponse::responseForbidden();
                            		return AjaxHelper::jsonError('have a error in file cover upload');
                            	}
-       //                     	if (!file_exists('../asset/images')) {
-    			// 				mkdir('../asset/images', 0777, true);
-							// }
-							$savePath = dirname(__FILE__) . '/assets/images';
 							$cover_name = StringHelper::generateRandomString(15).'.'.$extension;
                            	move_uploaded_file($_FILES["cover"]["tmp_name"],$savePath.'/'.$cover_name);
                            	$isChangeCover = true;
@@ -432,34 +417,34 @@ Yii::import('application.models.Dto.QueryOption');
 
 			if(isset($_POST['about']))
 				$address->about = $_POST['about'];
-			
+
 			if(isset($_POST['lat']))
 				$address->lat = $_POST['lat'];
 			else{
 				HttpResponse::responseBadRequest();
-				return AjaxHelper::jsonError('lat is empty');	
+				return AjaxHelper::jsonError('lat is empty');
 			}
 
 			if(isset($_POST['lng']))
 				$address->lng = $_POST['lng'];
 			else{
 				HttpResponse::responseBadRequest();
-				return AjaxHelper::jsonError('lng is empty');	
+				return AjaxHelper::jsonError('lng is empty');
 			}
 
 			if(isset($_POST['address']))
 				$address->address = $_POST['address'];
 			else{
 				HttpResponse::responseBadRequest();
-				return AjaxHelper::jsonError('address is empty');	
+				return AjaxHelper::jsonError('address is empty');
 			}
 
 			if(isset($_POST['city']))
 				$address->city = $_POST['city'];
-			
+
 			if(isset($_POST['street_number']))
 				$address->street_number = $_POST['street_number'];
-				
+
 			if(isset($_POST['phone_number']))
 				$address->phone_number = $_POST['phone_number'];
 
@@ -479,7 +464,7 @@ Yii::import('application.models.Dto.QueryOption');
 				return AjaxHelper::jsonSuccess($address,"update success");
 			}else{
 				HttpResponse::responseInternalServerError();
-				return AjaxHelper::jsonError('Have a error in process Update Address');	
+				return AjaxHelper::jsonError('Have a error in process Update Address');
 			}
 		}
 
@@ -503,7 +488,7 @@ Yii::import('application.models.Dto.QueryOption');
 				return AjaxHelper::jsonError('Have error in process update');
 			}
 		}
-		
+
 		/**
 		 * [actionReport description]
 		 * @param address_id
@@ -529,7 +514,7 @@ Yii::import('application.models.Dto.QueryOption');
 					$report->user_id = $user['id'];
 				}else{
 					HttpResponse::responseAuthenticationFailure();
-					AjaxHelper::jsonError('Authentication is failure');	
+					AjaxHelper::jsonError('Authentication is failure');
 				}
 			}else{
 				HttpResponse::responseBadRequest();
@@ -569,7 +554,7 @@ Yii::import('application.models.Dto.QueryOption');
 						$address->user_id = $user["id"];
 					}else{
 						HttpResponse::responseAuthenticationFailure();
-						AjaxHelper::jsonError('Authentication is failure');	
+						AjaxHelper::jsonError('Authentication is failure');
 					}
 				}else{
 					HttpResponse::responseBadRequest();
@@ -582,7 +567,7 @@ Yii::import('application.models.Dto.QueryOption');
 				return AjaxHelper::jsonSuccess("liked success");
 			}else{
 				HttpResponse::responseConflict();
-				return AjaxHelper::jsonError('Liked or Have error in process create report');	
+				return AjaxHelper::jsonError('Liked or Have error in process create report');
 			}
 		}
 
@@ -601,7 +586,7 @@ Yii::import('application.models.Dto.QueryOption');
 						$address->user_id = $user["id"];
 					}else{
 						HttpResponse::responseAuthenticationFailure();
-						AjaxHelper::jsonError('Authentication is failure');	
+						AjaxHelper::jsonError('Authentication is failure');
 					}
 				}else{
 					HttpResponse::responseBadRequest();
@@ -614,7 +599,7 @@ Yii::import('application.models.Dto.QueryOption');
 				return AjaxHelper::jsonSuccess("dislike success");
 			}else{
 				HttpResponse::responseConflict();
-				return AjaxHelper::jsonError('Liked or Have error in process create report');	
+				return AjaxHelper::jsonError('Liked or Have error in process create report');
 			}
 		}
 
@@ -640,10 +625,10 @@ Yii::import('application.models.Dto.QueryOption');
 								->where('id=:token',array(':token'=>$post['owner_id']))
 								->queryRow();
 			}
-			
+
 			return $posts;
 		}
-		
+
 		public function getListLikeAddress($address_id){
 			$likes = Yii::app()->db->createCommand()
 									->select('*')
@@ -657,8 +642,8 @@ Yii::import('application.models.Dto.QueryOption');
 								->where('id=:token',array(':token'=>$like['user_id']))
 								->queryRow();
 			}
-			
+
 			return $likes;
-		}	
-	
+		}
+
 	}
