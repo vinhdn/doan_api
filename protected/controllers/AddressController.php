@@ -125,6 +125,13 @@ Yii::import('application.models.Dto.QueryOption');
 			if(isset($_POST['dist'])){
 				$dist = $_POST['dist'];
 			}
+			$min_dist = 0;
+			if(isset($_POST['min_dist'])){
+				$min_dist = $_POST['min_dist'];
+				if($min_dist >= $dist){
+					$min_dist = 0;
+				}
+			}
 			$limit = 20;
 			if(isset($_POST['limit'])){
 				$limit = $_POST['limit'];
@@ -137,7 +144,7 @@ Yii::import('application.models.Dto.QueryOption');
 			if(isset($_POST['category_id'])){
 				$cate = $_POST['category_id'];
 			}
-			$addresses = Yii::app()->db->createCommand('call geodist('.$_POST['lat'].', '.$_POST['lng'].', '.$dist.', '.$limit.', \''.$query.'\''.', \''.$cate.'\')')
+			$addresses = Yii::app()->db->createCommand('call geodist('.$_POST['lat'].', '.$_POST['lng'].','.$min_dist.', '.$dist.', '.$limit.', \''.$query.'\''.', \''.$cate.'\')')
 										->queryAll();
 
 			foreach ($addresses as $var => $address) {
