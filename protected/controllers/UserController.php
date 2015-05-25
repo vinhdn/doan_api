@@ -158,9 +158,8 @@ Yii::import('application.models.Dto.QueryOption');
 			}
 			$user->first_name = $_POST['first_name'];
 			$user->last_name = (isset($_POST['last_name'])) ? $_POST['last_name'] : '';
-			$user->gender = $_POST['gender'];
+			$user->gender = (isset($_POST['gender'])) ? $_POST['gender'] : 'male';
 			$user->facebook_id = (isset($_POST['facebook_id'])) ? $_POST['facebook_id'] : '';
-			$user->address = (isset($_POST['address'])) ? $_POST['address'] : '';
 			$user->address = (isset($_POST['address'])) ? $_POST['address'] : '';
 			$user->lat = (isset($_POST['lat'])) ? $_POST['lat'] : 0;
 			$user->lng = (isset($_POST['lng'])) ? $_POST['lng'] : 0;

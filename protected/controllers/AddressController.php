@@ -136,6 +136,10 @@ Yii::import('application.models.Dto.QueryOption');
 			if(isset($_POST['limit'])){
 				$limit = $_POST['limit'];
 			}
+			$offset = 0;
+			if(isset($_POST['offset'])){
+				$offset = $_POST['offset'];
+			}
 			$query = '';
 			if(isset($_POST['q'])){
 				$query = $_POST['q'];
@@ -144,7 +148,7 @@ Yii::import('application.models.Dto.QueryOption');
 			if(isset($_POST['category_id'])){
 				$cate = $_POST['category_id'];
 			}
-			$addresses = Yii::app()->db->createCommand('call geodist('.$_POST['lat'].', '.$_POST['lng'].','.$min_dist.', '.$dist.', '.$limit.', \''.$query.'\''.', \''.$cate.'\')')
+			$addresses = Yii::app()->db->createCommand('call geodist('.$_POST['lat'].', '.$_POST['lng'].','.$min_dist.', '.$dist.', '.$limit.', '.$offset.' , \''.$query.'\''.', \''.$cate.'\')')
 										->queryAll();
 
 			foreach ($addresses as $var => $address) {
@@ -304,25 +308,30 @@ Yii::import('application.models.Dto.QueryOption');
 				$address->id = StringHelper::generateRandomOrderKey(Yii::app()->params['ID_LENGTH']);
 			if($address->save()){
 				if(isset($_POST['time_open'])){
-				$time_opens = $_POST['time_open'];
-				try {
-					$time_array = explode(";", $time_open);
-					if($time_array){
-						foreach ($time_array as $time) {
-							$times = explode("*", $time);
-							$to = new TimeOpen;
-							$to->address_id = $address->id;
-							$to->weekday = $times[0];
-							$to->time_open = $times[1];
-							$to->save();
+					$time_opens = $_POST['time_open'];
+					try {
+						$time_array = explode(";", $time_open);
+						if($time_array){
+							foreach ($time_array as $time) {
+								$times = explode("*", $time);
+								$to = new TimeOpen;
+								$to->address_id = $address->id;
+								$to->weekday = $times[0];
+								$to->time_open = $times[1];
+								$to->save();
+							}
 						}
-					}
-				} catch (Exception $e) {
+					} catch (Exception $e) {
 
+					}
 				}
-			}
 				HttpResponse::responseOk();
-				return AjaxHelper::jsonSuccess($address,"create success");
+				$address = Yii::app()->db->createCommand()
+					->select('*')
+					->from('address')
+					->where('id=:token',array(':token'=>$address->id))
+					->queryRow();
+					return AjaxHelper::jsonSuccess($user,'Register sucees');
 			}else{
 				HttpResponse::responseInternalServerError();
 				return AjaxHelper::jsonError('Have a error in process Create Address');
