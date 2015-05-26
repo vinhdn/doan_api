@@ -40,7 +40,7 @@ Yii::import('application.models.Dto.QueryOption');
 			}
 			$address['is_like'] = false;
 			$address['is_owner'] = false;
-			if(isset($_POST['access_token'])){
+			if(isset($_POST['access_token']) && ($_POST['access_token'] !== "")){
 				// HttpResponse::responseBadRequest();
 				// return AjaxHelper::jsonError('access_token is not empty');
 				$user = $this->checkAuth($_POST['access_token']);
@@ -191,7 +191,7 @@ Yii::import('application.models.Dto.QueryOption');
 			if(isset($_POST['user_id'])){
 			$address->owner_id = $_POST["user_id"];
 			}else{
-				if(isset($_POST['access_token'])){
+				if(isset($_POST['access_token']) && ($_POST['access_token'] !== "")){
 					$user = $this->checkAuth($_POST['access_token']);
 					if($user){
 						$address->owner_id = $user["id"];
@@ -349,7 +349,7 @@ Yii::import('application.models.Dto.QueryOption');
 				HttpResponse::responseNotFound();
 				return AjaxHelper::jsonError('Address ID = '. $_POST['id'] .' not found');
 			}
-			if(isset($_POST['access_token'])){
+			if(isset($_POST['access_token']) && ($_POST['access_token'] !== "")){
 				$user = $this->checkAuth($_POST['access_token']);
 				if($user){
 					if($address['owner_id'] != $user['id']){
@@ -524,7 +524,7 @@ Yii::import('application.models.Dto.QueryOption');
 				HttpResponse::responseNotFound();
 				return AjaxHelper::jsonError('Address ID = '. $_POST['address_id'] .' not found');
 			}
-			if(isset($_POST['access_token'])){
+			if(isset($_POST['access_token']) && ($_POST['access_token'] !== "")){
 				$user = $this->checkAuth($_POST['access_token']);
 				if($user){
 					$report->user_id = $user['id'];
@@ -564,7 +564,7 @@ Yii::import('application.models.Dto.QueryOption');
 			if(isset($_POST['user_id'])){
 				$address->user_id = $_POST["user_id"];
 			}else{
-				if(isset($_POST['access_token'])){
+				if(isset($_POST['access_token']) && ($_POST['access_token'] !== "")){
 					$user = $this->checkAuth($_POST['access_token']);
 					if($user){
 						$address->user_id = $user["id"];
@@ -583,7 +583,7 @@ Yii::import('application.models.Dto.QueryOption');
 				return AjaxHelper::jsonSuccess("liked success");
 			}else{
 				HttpResponse::responseConflict();
-				return AjaxHelper::jsonError('Liked or Have error in process create report');
+				return AjaxHelper::jsonError('Liked or Have error in process like');
 			}
 		}
 
@@ -596,7 +596,7 @@ Yii::import('application.models.Dto.QueryOption');
 			if(isset($_POST['user_id'])){
 				$address->user_id = $_POST["user_id"];
 			}else{
-				if(isset($_POST['access_token'])){
+				if(isset($_POST['access_token']) && ($_POST['access_token'] !== "")){
 					$user = $this->checkAuth($_POST['access_token']);
 					if($user){
 						$address->user_id = $user["id"];
@@ -615,7 +615,49 @@ Yii::import('application.models.Dto.QueryOption');
 				return AjaxHelper::jsonSuccess("dislike success");
 			}else{
 				HttpResponse::responseConflict();
-				return AjaxHelper::jsonError('Liked or Have error in process create report');
+				return AjaxHelper::jsonError('Liked or Have error in process dislike');
+			}
+		}
+
+		public function actionRate(){
+			$rates = new Rate;
+			if(isset($_POST['access_token']) && ($_POST['access_token'] !== "")){
+				$user = $this->checkAuth($_POST['access_token']);
+				if($user){
+						$rates->user_id = $user["id"];
+				}else{
+					HttpResponse::responseAuthenticationFailure();
+					AjaxHelper::jsonError('Authentication is failure');
+				}
+			}else{
+				HttpResponse::responseBadRequest();
+				return AjaxHelper::jsonError('access_token is empty');
+			}
+			if(!isset($_POST['address_id'])){
+				HttpResponse::responseBadRequest();
+					return AjaxHelper::jsonError('address_id is empty');
+			}
+			if(!isset($_POST['content'])){
+				HttpResponse::responseBadRequest();
+					return AjaxHelper::jsonError('content is empty');
+			}
+			if(!isset($_POST['rate'])){
+				HttpResponse::responseBadRequest();
+					return AjaxHelper::jsonError('rate is empty');
+			}
+				
+			$rates->rate = $_POST['rate'];
+			$rates->content = $_POST['content'];
+			$rates->address_id = $_POST['address_id'];
+			$rates->id = StringHelper::generateRandomOrderKey(Yii::app()->params['ID_LENGTH']);
+			$rates->date_update = gmmktime();
+			$rates->date_create = gmmktime();
+			if($rates->save()){
+				HttpResponse::responseOk();
+				return AjaxHelper::jsonSuccess($rates->id, "rate success");
+			}else{
+				HttpResponse::responseConflict();
+				return AjaxHelper::jsonError('Have error in process create rate');
 			}
 		}
 

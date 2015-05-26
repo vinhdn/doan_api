@@ -46,20 +46,8 @@ Yii::import('application.models.Dto.QueryOption');
 			->select('*')
 			->from('user')
 			->where('access_token=:token',array(':token'=>$token))
-			->queryAll();
+			->queryRow();
 			return $user;
-		}
-
-		public function actionGetListUser(){
-			$listIdiom = Yii::app()->db->createCommand()
-			->select('*')
-			->from('user')
-			->queryAll();
-			if($listIdiom){
-				return AjaxHelper::jsonSuccess($listIdiom, 'Lists success');
-			}else{
-				return AjaxHelper::jsonError('No lists idiom found');
-			}
 		}
 
 		public function actionLogin(){
@@ -83,11 +71,11 @@ Yii::import('application.models.Dto.QueryOption');
 		}
 
 		public function actionLogout(){
-			if(!isset($_POST['access_token'])){
+			if(!isset($_POST['access_token']) || ($_POST['access_token'] === "")){
 				HttpResponse::responseBadRequest();
 				return AjaxHelper::jsonError('access_token is not empty');
 			}
-			$user = $this->checkAuth($_POST['access_token']);
+			$user = User::model()->findByAttributes(array('access_token'=>$_POST['access_token']));
 			if($user){
 
 				$user->access_token = "";
@@ -107,7 +95,7 @@ Yii::import('application.models.Dto.QueryOption');
 		}
 
 		public function actionGetProfile(){
-			if(!isset($_POST['access_token'])){
+			if(!isset($_POST['access_token']) || ($_POST['access_token'] === "")){
 				HttpResponse::responseBadRequest();
 				return AjaxHelper::jsonError('access_token is not empty');
 			}
@@ -150,8 +138,6 @@ Yii::import('application.models.Dto.QueryOption');
 					return AjaxHelper::jsonError('first_name is empty');
 				if(!isset($_POST['birthday']))
 					return AjaxHelper::jsonError('birthday is empty');
-				if(!isset($_POST['gender']))
-					return AjaxHelper::jsonError('gender is empty');
 				$user->birthday = $_POST['birthday'];
 				$user->email = $_POST['email'];
 				$user->password = $_POST['password'];
@@ -219,11 +205,11 @@ Yii::import('application.models.Dto.QueryOption');
 		}
 
 		public function actionEditProfile(){
-			if(!isset($_POST['access_token'])){
+			if(!isset($_POST['access_token']) || ($_POST['access_token'] === "")){
 				HttpResponse::responseBadRequest();
 				return AjaxHelper::jsonError('access_token is empty');
 			}
-			$user = $this->checkAuth($_POST['access_token']);
+			$user = User::model()->findByAttributes(array('access_token'=>$_POST['access_token']));
 			if(!$user){
 				HttpResponse::responseAuthenticationDataIncorrect();
 				return AjaxHelper::jsonError('Access_token is not correct');
@@ -273,4 +259,34 @@ Yii::import('application.models.Dto.QueryOption');
 			}
 		}
 
+		public function actionGetListPost(){
+			if(!isset($_POST['access_token']) || ($_POST['access_token'] === "")){
+				HttpResponse::responseBadRequest();
+				return AjaxHelper::jsonError('access_token is empty');
+			}
+			$user = $this->checkAuth($_POST['access_token']);
+			if(!$user){
+				HttpResponse::responseAuthenticationDataIncorrect();
+				return AjaxHelper::jsonError('Access_token is not correct');
+			}
+			HttpResponse::responseOk();
+			return AjaxHelper::jsonSuccess($this->getListPostOfAddress($user['id']),"Get list post Success");
+		}
+
+		public function getListPostOfAddress($user_id){
+			$posts = Yii::app()->db->createCommand()
+									->select('*')
+									->from('post')
+									->where('owner_id=:address_id and state = 0',array(':address_id'=>$user_id))
+									->queryAll();
+			foreach ($posts as $var => $post) {
+				$posts[$var]['address'] = Yii::app()->db->createCommand()
+								->select('id, name, category_id')
+								->from('address')
+								->where('id=:token',array(':token'=>$post['address_id']))
+								->queryRow();
+			}
+
+			return $posts;
+		}
 	}
