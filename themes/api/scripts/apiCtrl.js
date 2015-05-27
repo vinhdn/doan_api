@@ -3,30 +3,33 @@
 /* Controllers */
 
 var $config = {
-  getListDanhmuc:{
-    requestAction: 'danhmuc/getlist',
-    params:[
-      
-    ],
-  },
-  getListMenu:{
-    requestAction: 'danhmuc/getmenu',
+  getInfo:{
+    requestAction: 'address/getInfo',
     params:[
       {slug:'id',type:'text',required:true,options:[]}
     ],
   },
-  getListSubMenu:{
-    requestAction: 'menu/getsubmenu',
+  
+  getInfo:{
+    requestAction: 'address/getInfo',
     params:[
       {slug:'id',type:'text',required:true,options:[]}
     ],
   },
-  getListLession:{
-    requestAction: 'submenu/getlession',
+
+  getInfo:{
+    requestAction: 'address/getInfo',
     params:[
       {slug:'id',type:'text',required:true,options:[]}
     ],
-  }
+  },
+
+  getInfo:{
+    requestAction: 'address/getInfo',
+    params:[
+      {slug:'id',type:'text',required:true,options:[]}
+    ],
+  },
 };
 
 angular.module('apiApp.controllers',[]).

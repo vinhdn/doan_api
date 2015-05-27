@@ -1,0 +1,435 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+			[
+				"ser",
+				"$services〔variable〕"
+			],
+			[
+				"service",
+				"services"
+			],
+			[
+				"tim",
+				"timeframes"
+			],
+			[
+				"time",
+				"$timeframes〔variable〕"
+			],
+			[
+				"ve",
+				"venue_id"
+			],
+			[
+				"venu",
+				"venue_id"
+			],
+			[
+				"com",
+				"comment_id"
+			],
+			[
+				"ur",
+				"url_image"
+			],
+			[
+				"ven",
+				"$venues〔variable〕"
+			],
+			[
+				"venues",
+				"$venues〔variable〕"
+			],
+			[
+				"li",
+				"$limit〔variable〕"
+			],
+			[
+				"crea",
+				"created_at"
+			],
+			[
+				"photo",
+				"photo_id"
+			],
+			[
+				"pho",
+				"$photo〔variable〕"
+			],
+			[
+				"ph",
+				"photo"
+			],
+			[
+				"att",
+				"$attribute〔variable〕"
+			],
+			[
+				"ti",
+				"$timeframe〔variable〕"
+			],
+			[
+				"da",
+				"days"
+			],
+			[
+				"ren",
+				"rendered_time"
+			],
+			[
+				"venue",
+				"venue_id"
+			],
+			[
+				"ra",
+				"$rate〔variable〕"
+			],
+			[
+				"anim",
+				"$animalactiontype〔variable〕"
+			],
+			[
+				"ani",
+				"$animalactiontype〔variable〕"
+			],
+			[
+				"local",
+				"local_guid"
+			],
+			[
+				"dis",
+				"$distance〔variable〕"
+			],
+			[
+				"ty",
+				"$type〔variable〕"
+			],
+			[
+				"add",
+				"$address〔variable〕"
+			],
+			[
+				"Ve",
+				"Venue"
+			],
+			[
+				"nu",
+				"$num〔variable〕"
+			],
+			[
+				"connect",
+				"connectDB"
+			],
+			[
+				"getall",
+				"getallUser"
+			],
+			[
+				"php",
+				"php"
+			],
+			[
+				"incl",
+				"include_once"
+			],
+			[
+				"mar",
+				"margin-top"
+			],
+			[
+				"create",
+				"create_at"
+			],
+			[
+				"rat",
+				"rating"
+			],
+			[
+				"user",
+				"user_id"
+			],
+			[
+				"h",
+				"h3"
+			]
+		]
+	},
+	"buffers":
+	[
+		{
+			"file": "AddressController.php",
+			"settings":
+			{
+				"buffer_size": 22462,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "PostController.php",
+			"settings":
+			{
+				"buffer_size": 10174,
+				"line_ending": "Unix"
+			}
+		}
+	],
+	"build_system": "",
+	"build_system_choices":
+	[
+	],
+	"build_varint": "",
+	"command_palette":
+	{
+		"height": 392.0,
+		"last_filter": "",
+		"selected_items":
+		[
+			[
+				"",
+				"Package Control: Install Package"
+			],
+			[
+				"pa",
+				"Package Control: Install Package"
+			],
+			[
+				"html",
+				"Set Syntax: HTML"
+			]
+		],
+		"width": 593.0
+	},
+	"console":
+	{
+		"height": 126.0,
+		"history":
+		[
+			"import urllib.request,os,hashlib; h = 'eb2297e1a458f27d836c04bb0cbaf282' + 'd0e7a3098092775ccb37ca9d6b2e4b7d'; pf = 'Package Control.sublime-package'; ipp = sublime.installed_packages_path(); urllib.request.install_opener( urllib.request.build_opener( urllib.request.ProxyHandler()) ); by = urllib.request.urlopen( 'http://packagecontrol.io/' + pf.replace(' ', '%20')).read(); dh = hashlib.sha256(by).hexdigest(); print('Error validating download (got %s instead of %s), please try manual install' % (dh, h)) if dh != h else open(os.path.join( ipp, pf), 'wb' ).write(by)"
+		]
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"expanded_folders":
+	[
+		"/Users/Tinhvv/doan_api",
+		"/Users/Tinhvv/doan_api/protected",
+		"/Users/Tinhvv/doan_api/protected/controllers"
+	],
+	"file_history":
+	[
+		"/Applications/XAMPP/xamppfiles/htdocs/PlaceNearMe/api/protected/models/Photo.php",
+		"/Applications/XAMPP/xamppfiles/htdocs/PlaceNearMe/api/protected/models/_base/BasePhoto.php",
+		"/Applications/XAMPP/xamppfiles/htdocs/PlaceNearMe/backen/checklogin.php",
+		"/Applications/XAMPP/xamppfiles/htdocs/PlaceNearMe/api/themes/api/scripts/apiService.js",
+		"/Applications/XAMPP/xamppfiles/htdocs/PlaceNearMe/api/protected/controllers/VenueController.php",
+		"/Applications/XAMPP/xamppfiles/htdocs/PlaceNearMe/api/protected/config/main.php",
+		"/Applications/XAMPP/xamppfiles/htdocs/tagbook/tagbook_new/api/protected/controllers/AnimalController.php",
+		"/Applications/XAMPP/xamppfiles/htdocs/tagbook/tagbook_new/api/protected/modules/testapi/views/default/index.php",
+		"/Applications/XAMPP/xamppfiles/htdocs/datn/readVenue.php",
+		"/Users/Tinhvv/Desktop/untame_modalcontact_demo/process.php",
+		"/Applications/XAMPP/xamppfiles/htdocs/PlaceNearMe/backen/addnewuser.js",
+		"/Users/Tinhvv/Library/Application Support/Sublime Text 3/Packages/CodeFormatter/Default (OSX).sublime-keymap",
+		"/Users/Tinhvv/Library/Application Support/Sublime Text 3/Packages/CodeFormatter/CodeFormatter.sublime-settings",
+		"/Users/Tinhvv/Desktop/ajax-loader.gif",
+		"/Users/Tinhvv/Library/Application Support/Sublime Text 3/Packages/User/Base File.sublime-settings",
+		"/Users/Tinhvv/Library/Application Support/Sublime Text 3/Packages/User/Preferences.sublime-settings",
+		"/Applications/XAMPP/xamppfiles/htdocs/PlaceNearMe/backen/home.php",
+		"/Applications/XAMPP/xamppfiles/htdocs/PlaceNearMe/backen/connectDB.php",
+		"/Applications/XAMPP/xamppfiles/htdocs/tagbook/tagbook_new/api/themes/api/scripts/apiService.js"
+	],
+	"find":
+	{
+		"height": 23.0
+	},
+	"find_in_files":
+	{
+		"height": 93.0,
+		"where_history":
+		[
+			"/Applications/XAMPP/xamppfiles/htdocs/PlaceNearMe/backen",
+			""
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": false,
+		"find_history":
+		[
+			"venues"
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": false,
+		"replace_history":
+		[
+			"venue"
+		],
+		"reverse": false,
+		"show_context": true,
+		"use_buffer2": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"selected": 1,
+			"sheets":
+			[
+				{
+					"buffer": 0,
+					"file": "AddressController.php",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 22462,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								17741,
+								17741
+							]
+						],
+						"settings":
+						{
+							"function_name_status_row": 503,
+							"syntax": "Packages/PHP/PHP.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": -0.0,
+						"translation.y": 4008.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 1,
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "PostController.php",
+					"semi_transient": true,
+					"settings":
+					{
+						"buffer_size": 10174,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"function_name_status_row": 0,
+							"syntax": "Packages/PHP/PHP.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": -0.0,
+						"translation.y": 1354.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"type": "text"
+				}
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 23.0
+	},
+	"input":
+	{
+		"height": 31.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"output.find_results":
+	{
+		"height": 0.0
+	},
+	"pinned_build_system": "",
+	"project": "datn.sublime-project",
+	"replace":
+	{
+		"height": 42.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_symbol":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"selected_group": 0,
+	"settings":
+	{
+	},
+	"show_minimap": true,
+	"show_open_files": false,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 283.0,
+	"status_bar_visible": true,
+	"template_settings":
+	{
+	}
+}
