@@ -75,10 +75,10 @@ return array(
 		// uncomment the following to use a MySQL database
 
 		'db'=>array(
-			'connectionString' => 'mysql:host=localhost;dbname=nearyou',
+			'connectionString' => 'mysql:host=localhost;dbname=nearby',
 			'emulatePrepare' => true,
 			'username' => 'root',
-			'password' => 'damthatbai2015',
+			'password' => '',
 			'charset' => 'utf8',
 			'tablePrefix' => '',
 		),
