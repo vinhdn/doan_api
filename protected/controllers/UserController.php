@@ -273,6 +273,49 @@ Yii::import('application.models.Dto.QueryOption');
 			return AjaxHelper::jsonSuccess($this->getListPostOfAddress($user['id']),"Get list post Success");
 		}
 
+		public function actionGetListSaved(){
+			if(!isset($_POST['access_token']) || ($_POST['access_token'] === "")){
+				HttpResponse::responseBadRequest();
+				return AjaxHelper::jsonError('access_token is empty');
+			}
+			$user = $this->checkAuth($_POST['access_token']);
+			if(!$user){
+				HttpResponse::responseAuthenticationDataIncorrect();
+				return AjaxHelper::jsonError('Access_token is not correct');
+			}
+			$address_ids = Yii::app()->db->createCommand()
+									->select('address_id')
+									->from('like_address')
+									->where('user_id=:address_id',array(':address_id'=>$user['id']))
+									->queryAll();
+			foreach ($address_ids as $var => $like) {
+				$address_ids[$var] = Yii::app()->db->createCommand()
+								->select('*')
+								->from('address')
+								->where('id=:token',array(':token'=>$like['address_id']))
+								->queryRow();
+			}
+			HttpResponse::responseOk();
+			return AjaxHelper::jsonSuccess($address_ids,"Get list Saved Success");
+		}
+
+		public function getListLikeAddress($address_id){
+			$likes = Yii::app()->db->createCommand()
+									->select('*')
+									->from('like_address')
+									->where('address_id=:address_id',array(':address_id'=>$address_id))
+									->queryAll();
+			foreach ($likes as $var => $like) {
+				$likes[$var] = Yii::app()->db->createCommand()
+								->select('id, first_name, last_name, avatar_url, avatar')
+								->from('user')
+								->where('id=:token',array(':token'=>$like['user_id']))
+								->queryRow();
+			}
+
+			return $likes;
+		}
+
 		public function getListPostOfAddress($user_id){
 			$posts = Yii::app()->db->createCommand()
 									->select('*')
