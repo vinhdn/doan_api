@@ -201,31 +201,31 @@ Yii::import('application.models.Dto.QueryOption');
 			}
 			$is_reservation = 2;
 			if(isset($_POST['is_reservation'])){
-				$is_reservation = $_POST['is_reservation'];
+				$is_reservation = 0;
 			}
 			$is_outdoor = 2;
 			if(isset($_POST['is_outdoor'])){
-				$is_outdoor = $_POST['is_outdoor'];
+				$is_outdoor = 0;
 			}
 			$is_lunch = 2;
 			if(isset($_POST['is_lunch'])){
-				$is_lunch = $_POST['is_lunch'];
+				$is_lunch = 0;
 			}
 			$is_dinner = 2;
 			if(isset($_POST['is_dinner'])){
-				$is_dinner = $_POST['is_dinner'];
+				$is_dinner = 0;
 			}
 			$is_wifi = 2;
 			if(isset($_POST['is_wifi'])){
-				$is_wifi = $_POST['is_wifi'];
+				$is_wifi = 0;
 			}
 			$is_creditcard = 2;
 			if(isset($_POST['is_creditcard'])){
-				$is_creditcard = $_POST['is_creditcard'];
+				$is_creditcard = 0;
 			}
 			$is_breakfast = 2;
 			if(isset($_POST['is_breakfast'])){
-				$is_breakfast = $_POST['is_breakfast'];
+				$is_breakfast = 0;
 			}
 
 			$addresses = Yii::app()->db->createCommand('call search('.$_POST['lat'].', '.$_POST['lng'].','.$min_dist.', '.$dist.', '.$limit.', '.$offset.' , \''.$query.'\''.', \''.$cate.'\', '.$is_reservation.', '.$is_outdoor.', '.$is_lunch.', '.$is_dinner.', '.$is_wifi.', '.$is_creditcard.', '.$is_breakfast.')')
