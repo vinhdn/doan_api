@@ -163,6 +163,86 @@ Yii::import('application.models.Dto.QueryOption');
 					return AjaxHelper::jsonSuccess($addresses,"list Address");
 		}
 
+		public function actionSearch(){
+			if(!isset($_POST['lat'])){
+				HttpResponse::responseBadRequest();
+				return AjaxHelper::jsonError('lat is empty');
+			}
+			if(!isset($_POST['lng'])){
+				HttpResponse::responseBadRequest();
+				return AjaxHelper::jsonError('lng is empty');
+			}
+			$dist = 2000;
+			if(isset($_POST['dist'])){
+				$dist = $_POST['dist'];
+			}
+			$min_dist = 0;
+			if(isset($_POST['min_dist'])){
+				$min_dist = $_POST['min_dist'];
+				if($min_dist >= $dist){
+					$min_dist = 0;
+				}
+			}
+			$limit = 20;
+			if(isset($_POST['limit'])){
+				$limit = $_POST['limit'];
+			}
+			$offset = 0;
+			if(isset($_POST['offset'])){
+				$offset = $_POST['offset'];
+			}
+			$query = '';
+			if(isset($_POST['q'])){
+				$query = $_POST['q'];
+			}
+			$cate = '';
+			if(isset($_POST['category_id'])){
+				$cate = $_POST['category_id'];
+			}
+			$is_reservation = 2;
+			if(isset($_POST['is_reservation'])){
+				$is_reservation = $_POST['is_reservation'];
+			}
+			$is_outdoor = 2;
+			if(isset($_POST['is_outdoor'])){
+				$is_outdoor = $_POST['is_outdoor'];
+			}
+			$is_lunch = 2;
+			if(isset($_POST['is_lunch'])){
+				$is_lunch = $_POST['is_lunch'];
+			}
+			$is_dinner = 2;
+			if(isset($_POST['is_dinner'])){
+				$is_dinner = $_POST['is_dinner'];
+			}
+			$is_wifi = 2;
+			if(isset($_POST['is_wifi'])){
+				$is_wifi = $_POST['is_wifi'];
+			}
+			$is_creditcard = 2;
+			if(isset($_POST['is_creditcard'])){
+				$is_creditcard = $_POST['is_creditcard'];
+			}
+			$is_breakfast = 2;
+			if(isset($_POST['is_breakfast'])){
+				$is_breakfast = $_POST['is_breakfast'];
+			}
+
+			$addresses = Yii::app()->db->createCommand('call search('.$_POST['lat'].', '.$_POST['lng'].','.$min_dist.', '.$dist.', '.$limit.', '.$offset.' , \''.$query.'\''.', \''.$cate.'\', '.$is_reservation.', '.$is_outdoor.', '.$is_lunch.', '.$is_dinner.', '.$is_wifi.', '.$is_creditcard.', '.$is_breakfast.')')
+										->queryAll();
+
+			foreach ($addresses as $var => $address) {
+				$addresses[$var]['category'] = Yii::app()->db->createCommand()
+									->select('*')
+									->from('category')
+									->where('id=:token',array(':token'=>$address['category_id']))
+									->queryRow();
+			}
+
+					HttpResponse::responseOk();
+					return AjaxHelper::jsonSuccess($addresses,"list Address");
+		}
+
 		/**
 		 * [actionCreate description]
 		 * @param id
@@ -331,7 +411,7 @@ Yii::import('application.models.Dto.QueryOption');
 					->from('address')
 					->where('id=:token',array(':token'=>$address->id))
 					->queryRow();
-					return AjaxHelper::jsonSuccess($user,'Register sucees');
+					return AjaxHelper::jsonSuccess($address,'Register sucees');
 			}else{
 				HttpResponse::responseInternalServerError();
 				return AjaxHelper::jsonError('Have a error in process Create Address');
